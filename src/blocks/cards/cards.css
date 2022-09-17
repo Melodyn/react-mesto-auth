@@ -1,0 +1,11 @@
+.cards {
+  min-height: 40vh;
+  padding: 52px 0 0;
+  margin: 0;
+}
+
+@media screen and (max-width: 911px) {
+  .cards {
+    padding: 36px 19px 0;
+  }
+}

@@ -1,0 +1,47 @@
+.profile__edit {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 10px 0 0;
+  border: 1px solid white;
+  margin: 0;
+  grid-area: edit;
+  transition: .3s;
+}
+
+.profile__edit::before {
+  position: absolute;
+  top: calc(50% - (10px / 2));
+  left: calc(50% - (10px / 2));
+  width: 10px;
+  height: 10px;
+  background-image: url('../../../images/buttons/edit.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  content: '';
+}
+
+.profile__edit:hover {
+  opacity: .6;
+}
+
+@media screen and (max-width: 911px) {
+  .profile__edit {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+  }
+
+  .profile__edit::before {
+    top: calc(50% - (8px / 2));
+    left: calc(50% - (8px / 2));
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media screen and (max-width: 611px) {
+  .profile__edit {
+    margin-top: 26px;
+  }
+}
