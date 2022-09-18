@@ -1,0 +1,12 @@
+.navigation {
+  display: flex;
+  overflow: hidden;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+@media screen and (max-width: 911px) {
+  .navigation {
+    gap: 12px;
+  }
+}

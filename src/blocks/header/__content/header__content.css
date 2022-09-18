@@ -1,12 +1,13 @@
-.header__content {
+.header__container {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   padding: 0;
+  gap: 10px;
 }
 
 @media screen and (max-width: 911px) {
-  .header__content {
+  .header__container {
     padding: 0 30px;
   }
 }

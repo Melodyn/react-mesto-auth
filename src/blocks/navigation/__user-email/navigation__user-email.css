@@ -1,0 +1,4 @@
+.navigation__user-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

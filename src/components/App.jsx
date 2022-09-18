@@ -2,7 +2,7 @@ import '../vendor/normalize.css';
 import '../blocks/index.css';
 import { useEffect, useState } from 'react';
 import { Api } from '../utils/Api';
-import { apiConfig, enumPopupName } from '../utils/constants';
+import { apiConfig, dataJSON, enumPopupName } from '../utils/constants';
 // components
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -19,20 +19,20 @@ const App = () => {
   const [openPopupName, setOpenPopupName] = useState('');
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState(defaultCurrentUser);
-  const [cards, updateCards] = useState([]);
+  const [cards, updateCards] = useState(dataJSON.places.slice().reverse());
 
-  useEffect(() => {
-    Promise
-      .all([
-        apiMesto.getCards(),
-        apiMesto.getProfile(),
-      ])
-      .then(([initCards, user]) => {
-        updateCards(initCards.slice().reverse());
-        setCurrentUser(user);
-      })
-      .catch(console.error);
-  }, []);
+  // useEffect(() => {
+  //   Promise
+  //     .all([
+  //       apiMesto.getCards(),
+  //       apiMesto.getProfile(),
+  //     ])
+  //     .then(([initCards, user]) => {
+  //       updateCards(initCards.slice().reverse());
+  //       setCurrentUser(user);
+  //     })
+  //     .catch(console.error);
+  // }, []);
 
   const onClosePopup = () => {
     setOpenPopupName('');

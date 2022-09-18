@@ -1,6 +1,7 @@
 .logo {
   display: block;
   width: 143px;
+  min-width: 110px;
   height: 33px;
   background-image: url('../../images/logo.svg');
   background-position: left center;
