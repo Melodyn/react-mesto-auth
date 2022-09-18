@@ -1,5 +1,5 @@
 import '../vendor/normalize.css';
-import '../pages/index.css';
+import '../blocks/index.css';
 import { useEffect, useState } from 'react';
 import { Api } from '../utils/Api';
 import { apiConfig, enumPopupName } from '../utils/constants';

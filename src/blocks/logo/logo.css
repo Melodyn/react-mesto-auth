@@ -16,7 +16,6 @@
 @media screen and (max-width: 911px) {
   .logo {
     height: 24px;
-    background-position: 27px center;
     background-size: auto 24px;
   }
 }

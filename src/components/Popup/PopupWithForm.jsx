@@ -30,7 +30,7 @@ const PopupWithForm = (props) => {
           <button
             type="submit"
             name="submit"
-            className="button form__submit"
+            className="button subtitle subtitle_color_white form__submit"
           >
             {submitText}
           </button>

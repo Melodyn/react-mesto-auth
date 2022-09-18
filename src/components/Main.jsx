@@ -49,7 +49,7 @@ const Main = (props) => {
           aria-label="Редактировать"
           onClick={onEditProfile}
         />
-        <p className="profile__subtitle">{currentUser.about}</p>
+        <p className="subtitle profile__subtitle">{currentUser.about}</p>
         <button
           type="button"
           className="button profile__add-card"

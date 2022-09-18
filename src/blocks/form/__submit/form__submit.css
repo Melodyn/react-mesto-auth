@@ -4,9 +4,6 @@
   margin: 0;
   background-color: black;
   border-radius: 2px;
-  color: white;
-  font-size: 18px;
-  line-height: calc(1 / 18 * 22);
   text-align: center;
   transition: .3s;
 }

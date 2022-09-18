@@ -1,0 +1,12 @@
+.subtitle {
+  font-size: 18px;
+  line-height: calc(1 / 18 * 22);
+  text-decoration: none;
+}
+
+@media screen and (max-width: 911px) {
+  .subtitle {
+    font-size: 14px;
+    line-height: calc(1 / 14 * 17);
+  }
+}
