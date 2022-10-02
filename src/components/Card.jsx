@@ -14,6 +14,11 @@ const Card = ({
     isOwner: (currentUser._id === owner._id),
     liked: likes.some((liker) => liker._id === currentUser._id),
   };
+  const likeClassName = cn(
+    'button',
+    'card__like',
+    { card__like_liked: card.liked },
+  );
 
   return (
     <li className="card-item">
@@ -37,7 +42,7 @@ const Card = ({
           <div className="card__like-container">
             <button
               type="button"
-              className={cn('button', 'card__like', { card__like_liked: card.liked })}
+              className={likeClassName}
               aria-label="Оценить"
               onClick={() => onLike(card)}
             />

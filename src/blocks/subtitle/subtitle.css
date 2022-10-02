@@ -1,4 +1,6 @@
 .subtitle {
+  padding: 0;
+  margin: 0;
   font-size: 18px;
   line-height: calc(1 / 18 * 22);
   text-decoration: none;

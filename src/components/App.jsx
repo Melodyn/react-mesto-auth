@@ -3,14 +3,19 @@ import '../blocks/index.css';
 import { useEffect, useState } from 'react';
 import { Api } from '../utils/Api';
 import { apiConfig, dataJSON, enumPopupName } from '../utils/constants';
+import { Routes, Route, useNavigation } from 'react-router-dom';
 // components
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { Main } from './Main';
+import { Login } from './Page/Login';
+import { Register } from './Page/Register';
+import { ProtectedRoute } from './ProtectedRoute';
 import { PopupWithImage } from './Popup/PopupWithImage';
 import { PopupEditProfile } from './Popup/PopupEditProfile';
 import { PopupEditAvatar } from './Popup/PopupEditAvatar';
 import { PopupAddCard } from './Popup/PopupAddCard';
+import { PopupWithInfo } from './Popup/PopupWithInfo';
 // contexts
 import { defaultCurrentUser, CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -18,21 +23,31 @@ const App = () => {
   const apiMesto = new Api(apiConfig);
   const [openPopupName, setOpenPopupName] = useState('');
   const [selectedCard, setSelectedCard] = useState({});
+  const [lastOperationResult, setLastOperationResult] = useState({
+    isSuccess: true,
+    message: 'Успешно',
+  });
   const [currentUser, setCurrentUser] = useState(defaultCurrentUser);
   const [cards, updateCards] = useState(dataJSON.places.slice().reverse());
 
-  // useEffect(() => {
-  //   Promise
-  //     .all([
-  //       apiMesto.getCards(),
-  //       apiMesto.getProfile(),
-  //     ])
-  //     .then(([initCards, user]) => {
-  //       updateCards(initCards.slice().reverse());
-  //       setCurrentUser(user);
-  //     })
-  //     .catch(console.error);
-  // }, []);
+  useEffect(() => {
+    // Promise
+    //   .all([
+    //     apiMesto.getCards(),
+    //     apiMesto.getProfile(),
+    //   ])
+    //   .then(([initCards, user]) => {
+    //     updateCards(initCards.slice().reverse());
+    //     setCurrentUser(user);
+    //   })
+    //   .catch(console.error);
+
+    const savedUserJSON = localStorage.getItem('user') || '{}';
+    const savedUser = JSON.parse(savedUserJSON);
+    if (savedUser && savedUser.token) {
+      setCurrentUser(savedUser);
+    }
+  }, []);
 
   const onClosePopup = () => {
     setOpenPopupName('');
@@ -110,18 +125,93 @@ const App = () => {
       .catch(console.error);
   };
 
+  const updateUser = (user) => {
+    const updatedUser = {
+      ...currentUser,
+      ...user,
+    };
+    if (user.isAuth) {
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } else {
+      localStorage.removeItem('user');
+    }
+    setCurrentUser(updatedUser);
+  };
+  const onLogin = (user) => {
+    user.token = 'token';
+    user.isAuth = true;
+    updateUser(user);
+  };
+  const onRegister = (user) => {
+    user.token = 'token';
+    user.isAuth = true;
+    updateUser(user);
+    setLastOperationResult({
+      isSuccess: true,
+      message: 'Вы успешно зарегистрировались!',
+    });
+    setOpenPopupName(enumPopupName.info);
+  };
+  const onLogout = () => {
+    updateUser({
+      token: '',
+      isAuth: false,
+    });
+  };
+
+  const Comp = () => {
+    const navigation = useNavigation();
+    console.log('navigation', navigation);
+    return (
+      <h1>Hello World</h1>
+    );
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
-      <Main
-        cards={cards}
-        onEditProfile={onOpenPopupEditProfile}
-        onAddCard={onOpenPopupCard}
-        onEditAvatar={onOpenPopupEditAvatar}
-        onCardClick={onCardClick}
-        onCardLike={onCardLike}
-        onCardRemove={onCardRemove}
-      />
+      <Header onClickAuthButton={currentUser.isAuth ? onLogout : () => {}}/>
+
+      <Routes>
+        <Route
+          path="*"
+          component={<Comp />}
+        />
+        {/*<Route*/}
+          {/*path="/"*/}
+          {/*component={*/}
+            {/*<ProtectedRoute>*/}
+              {/*<Main*/}
+                {/*cards={cards}*/}
+                {/*onEditProfile={onOpenPopupEditProfile}*/}
+                {/*onAddCard={onOpenPopupCard}*/}
+                {/*onEditAvatar={onOpenPopupEditAvatar}*/}
+                {/*onCardClick={onCardClick}*/}
+                {/*onCardLike={onCardLike}*/}
+                {/*onCardRemove={onCardRemove}*/}
+              {/*/>*/}
+            {/*</ProtectedRoute>*/}
+          {/*}*/}
+        {/*/>*/}
+
+        {/*<Route*/}
+          {/*path="/sign-in"*/}
+          {/*component={*/}
+            {/*<Login*/}
+              {/*onSave={onLogin}*/}
+            {/*/>*/}
+          {/*}*/}
+        {/*/>*/}
+
+        {/*<Route*/}
+          {/*path="/sign-up"*/}
+          {/*component={*/}
+            {/*<Register*/}
+              {/*onSave={onRegister}*/}
+            {/*/>*/}
+          {/*}*/}
+        {/*/>*/}
+      </Routes>
+
       <Footer />
 
       <PopupEditProfile
@@ -149,6 +239,12 @@ const App = () => {
           onClosePopup();
           setSelectedCard({});
         }}
+      />
+
+      <PopupWithInfo
+        {...lastOperationResult}
+        isOpen={enumPopupName.info === openPopupName}
+        onClose={onClosePopup}
       />
     </CurrentUserContext.Provider>
   );

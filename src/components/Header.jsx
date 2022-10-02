@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import cn from 'classnames';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-const Header = () => {
+const Header = ({ onClickAuthButton }) => {
   const currentUser = useContext(CurrentUserContext);
   const buttonClassName = cn('subtitle', {
     subtitle_color_gray: currentUser.isAuth,
@@ -23,7 +23,7 @@ const Header = () => {
               </span>
             )
           }
-          <a href="#" className={buttonClassName}>{buttonText}</a>
+          <a href="#" className={buttonClassName} onClick={onClickAuthButton}>{buttonText}</a>
         </nav>
       </div>
     </header>

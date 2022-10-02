@@ -1,5 +1,5 @@
-.popup__content {
+.content {
   display: flex;
   flex-direction: column;
-  grid-area: content;
+  align-items: center;
 }

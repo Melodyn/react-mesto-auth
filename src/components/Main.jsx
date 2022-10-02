@@ -13,6 +13,7 @@ const Main = (props) => {
     onCardRemove,
   } = props;
   const currentUser = useContext(CurrentUserContext);
+  console.log('Main');
 
   const cardComponents = cards.map((card) => (
     <Card

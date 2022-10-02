@@ -1,0 +1,8 @@
+.form__item_theme_black {
+  border-bottom: 1px solid rgba(255 255 255 / 70%);
+  color: white;
+}
+
+.form__item_theme_black:focus {
+  border-bottom: 1px solid rgba(255 255 255 / 100%);
+}

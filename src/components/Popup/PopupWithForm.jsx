@@ -25,12 +25,12 @@ const PopupWithForm = (props) => {
           onClick={onClose}
         />
         <form action="/" name={name} onSubmit={onSubmit} className="popup__content form" noValidate>
-          <h2 className="form__title">{title}</h2>
+          <h2 className="title title_color_black">{title}</h2>
           {children}
           <button
             type="submit"
             name="submit"
-            className="button subtitle subtitle_color_white form__submit"
+            className="button button_color_black subtitle subtitle_color_white form__submit"
           >
             {submitText}
           </button>

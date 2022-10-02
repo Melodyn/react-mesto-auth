@@ -17,6 +17,7 @@ export const enumPopupName = [
   'card',
   'avatar',
   'preview',
+  'info',
 ].reduce((acc, value) => {
   acc[value] = value;
   return acc;
