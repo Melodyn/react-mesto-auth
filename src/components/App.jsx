@@ -3,7 +3,7 @@ import '../blocks/index.css';
 import { useEffect, useState } from 'react';
 import { Api } from '../utils/Api';
 import { apiConfig, dataJSON, enumPopupName } from '../utils/constants';
-import { Routes, Route, useNavigation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 // components
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -21,6 +21,7 @@ import { defaultCurrentUser, CurrentUserContext } from '../contexts/CurrentUserC
 
 const App = () => {
   const apiMesto = new Api(apiConfig);
+  const navigate = useNavigate();
   const [openPopupName, setOpenPopupName] = useState('');
   const [selectedCard, setSelectedCard] = useState({});
   const [lastOperationResult, setLastOperationResult] = useState({
@@ -44,6 +45,7 @@ const App = () => {
 
     const savedUserJSON = localStorage.getItem('user') || '{}';
     const savedUser = JSON.parse(savedUserJSON);
+
     if (savedUser && savedUser.token) {
       setCurrentUser(savedUser);
     }
@@ -141,75 +143,63 @@ const App = () => {
     user.token = 'token';
     user.isAuth = true;
     updateUser(user);
+    navigate('/');
   };
-  const onRegister = (user) => {
-    user.token = 'token';
-    user.isAuth = true;
-    updateUser(user);
+  const onRegister = () => {
     setLastOperationResult({
       isSuccess: true,
       message: 'Вы успешно зарегистрировались!',
     });
     setOpenPopupName(enumPopupName.info);
+    navigate('/signin');
   };
   const onLogout = () => {
     updateUser({
       token: '',
       isAuth: false,
     });
-  };
-
-  const Comp = () => {
-    const navigation = useNavigation();
-    console.log('navigation', navigation);
-    return (
-      <h1>Hello World</h1>
-    );
+    navigate('/signin');
   };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header onClickAuthButton={currentUser.isAuth ? onLogout : () => {}}/>
+      <Header onClickAuthButton={onLogout}/>
 
       <Routes>
         <Route
-          path="*"
-          component={<Comp />}
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Main
+                cards={cards}
+                onEditProfile={onOpenPopupEditProfile}
+                onAddCard={onOpenPopupCard}
+                onEditAvatar={onOpenPopupEditAvatar}
+                onCardClick={onCardClick}
+                onCardLike={onCardLike}
+                onCardRemove={onCardRemove}
+              />
+            </ProtectedRoute>
+          }
         />
-        {/*<Route*/}
-          {/*path="/"*/}
-          {/*component={*/}
-            {/*<ProtectedRoute>*/}
-              {/*<Main*/}
-                {/*cards={cards}*/}
-                {/*onEditProfile={onOpenPopupEditProfile}*/}
-                {/*onAddCard={onOpenPopupCard}*/}
-                {/*onEditAvatar={onOpenPopupEditAvatar}*/}
-                {/*onCardClick={onCardClick}*/}
-                {/*onCardLike={onCardLike}*/}
-                {/*onCardRemove={onCardRemove}*/}
-              {/*/>*/}
-            {/*</ProtectedRoute>*/}
-          {/*}*/}
-        {/*/>*/}
 
-        {/*<Route*/}
-          {/*path="/sign-in"*/}
-          {/*component={*/}
-            {/*<Login*/}
-              {/*onSave={onLogin}*/}
-            {/*/>*/}
-          {/*}*/}
-        {/*/>*/}
+        <Route
+          path="/signin"
+          element={
+            currentUser.isAuth ? <Navigate to="/" /> :<Login
+              onSave={onLogin}
+            />
+          }
+        />
 
-        {/*<Route*/}
-          {/*path="/sign-up"*/}
-          {/*component={*/}
-            {/*<Register*/}
-              {/*onSave={onRegister}*/}
-            {/*/>*/}
-          {/*}*/}
-        {/*/>*/}
+        <Route
+          path="/signup"
+          element={
+            currentUser.isAuth ? <Navigate to="/" /> : <Register
+              onSave={onRegister}
+            />
+          }
+        />
       </Routes>
 
       <Footer />

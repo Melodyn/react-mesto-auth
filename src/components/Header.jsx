@@ -1,19 +1,39 @@
 import { useContext } from 'react';
 import cn from 'classnames';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { useLocation, Link } from 'react-router-dom';
 
 const Header = ({ onClickAuthButton }) => {
+  const location = useLocation();
   const currentUser = useContext(CurrentUserContext);
-  const buttonClassName = cn('subtitle', {
+  const buttonClassName = cn('button', 'subtitle', 'animation', {
     subtitle_color_gray: currentUser.isAuth,
     subtitle_color_white: !currentUser.isAuth,
   });
-  const buttonText = currentUser.isAuth ? 'Выйти' : 'Войти';
+  const isSignInLocation = location.pathname.includes('signin');
+  const buttonEnterText = isSignInLocation ? 'Регистрация' : 'Вход';
+  const buttonText = currentUser.isAuth ? 'Выход' : buttonEnterText;
+  const onLogout = (e) => {
+    e.preventDefault();
+    onClickAuthButton();
+  };
+
+  const buttonElement = currentUser.isAuth
+    ? (
+        <button type="button" className={buttonClassName} onClick={onLogout}>
+          {buttonText}
+        </button>
+      )
+    : (
+        <Link to={isSignInLocation ? '/signup' : '/signin'} className={buttonClassName}>
+          {buttonText}
+        </Link>
+      );
 
   return (
     <header className="header">
       <div className="header__container">
-        <a href="#" className="logo" aria-label="Логотип" />
+        <Link to="/" className="logo" aria-label="Логотип" />
         <nav className="navigation">
           {
             (currentUser.isAuth && currentUser.email !== '')
@@ -23,7 +43,7 @@ const Header = ({ onClickAuthButton }) => {
               </span>
             )
           }
-          <a href="#" className={buttonClassName} onClick={onClickAuthButton}>{buttonText}</a>
+          {buttonElement}
         </nav>
       </div>
     </header>

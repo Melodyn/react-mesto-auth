@@ -1,5 +1,6 @@
 import { PageWithForm } from './PageWithForm';
 import { useForm } from '../../hooks/useForm';
+import { Link } from 'react-router-dom';
 
 const Login = (props) => {
   const {
@@ -12,9 +13,9 @@ const Login = (props) => {
 
   const Tip = () => (
     <span className="tip tip_color_white">
-      Ещё нет аккаунта? <a href="/" className="tip tip_color_white animation">
+      Ещё нет аккаунта? <Link to="/signup" className="tip tip_color_white animation">
         Зарегистрироваться
-      </a>
+      </Link>
     </span>
   );
 
