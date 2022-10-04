@@ -20,7 +20,6 @@ const PopupWithImage = (props) => {
         <button
           type="button"
           className="button popup__close"
-          tabIndex="1"
           aria-label="Закрыть"
           onClick={onClose}
         />

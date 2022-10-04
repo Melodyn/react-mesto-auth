@@ -33,7 +33,6 @@ const PopupAddCard = (props) => {
           name="name"
           className="form__item"
           placeholder="Название"
-          tabIndex="1"
           minLength="2"
           maxLength="30"
           value={values.name}
@@ -46,7 +45,6 @@ const PopupAddCard = (props) => {
           name="link"
           className="form__item"
           placeholder="Ссылка на картинку"
-          tabIndex="2"
           value={values.link}
           required
           onChange={setValues}

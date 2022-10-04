@@ -30,7 +30,6 @@ const PopupEditAvatar = (props) => {
           placeholder="Ссылка на изображение"
           minLength="2"
           maxLength="200"
-          tabIndex="1"
           ref={avatarRef}
           required
         />

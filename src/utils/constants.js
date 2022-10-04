@@ -2,6 +2,8 @@ export const apiConfig = {
   apiMestoBaseURL: 'https://nomoreparties.co',
   apiMestoCohort: 'cohort0',
   apiMestoToken: '80a75492-21c5-4330-a02f-308029e94b63',
+  apiMestoAuthURL: 'https://auth.nomoreparties.co',
+  apiMestoAuthToken: '',
 };
 
 export const httpMethod = {

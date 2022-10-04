@@ -38,7 +38,6 @@ const Main = (props) => {
             role="button"
             aria-label="Обновить аватар"
             aria-hidden="true"
-            tabIndex={0}
             onClick={onEditAvatar}
           />
         </div>
@@ -59,7 +58,19 @@ const Main = (props) => {
       </section>
 
       <section className="cards" aria-label="Красивые картинки">
-        <ul className="cards__list">{cardComponents}</ul>
+        {
+          cardComponents.length === 0 && (
+            <ul className="cards__list title_centered">
+              <li className="subtitle subtitle_color_gray">
+                Загрузка...
+              </li>
+            </ul>
+          )
+        }
+        {
+          cardComponents.length > 0 &&
+          (<ul className="cards__list">{cardComponents}</ul>)
+        }
       </section>
     </main>
   );

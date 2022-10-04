@@ -37,7 +37,6 @@ const PopupEditProfile = (props) => {
           placeholder="Название профиля"
           minLength="2"
           maxLength="40"
-          tabIndex="1"
           value={values.name}
           required
           onChange={setValues}
@@ -50,7 +49,6 @@ const PopupEditProfile = (props) => {
           placeholder="Описание профиля"
           minLength="2"
           maxLength="200"
-          tabIndex="2"
           value={values.about}
           required
           onChange={setValues}

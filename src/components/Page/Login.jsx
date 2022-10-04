@@ -1,3 +1,4 @@
+import { useEffect, useContext } from 'react';
 import { PageWithForm } from './PageWithForm';
 import { useForm } from '../../hooks/useForm';
 import { Link } from 'react-router-dom';
@@ -6,7 +7,7 @@ const Login = (props) => {
   const {
     onSave,
   } = props;
-  const [values, setValues, updateInitValues] = useForm({
+  const [values, setValues] = useForm({
     email: '',
     password: '',
   });
@@ -22,10 +23,6 @@ const Login = (props) => {
   const onLogin = (e) => {
     e.preventDefault();
     onSave(values);
-    updateInitValues({
-      email: '',
-      password: '',
-    });
   };
 
   return (

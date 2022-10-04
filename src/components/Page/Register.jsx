@@ -1,12 +1,12 @@
+import { Link } from 'react-router-dom';
 import { PageWithForm } from './PageWithForm';
 import { useForm } from '../../hooks/useForm';
-import { Link } from 'react-router-dom';
 
 const Register = (props) => {
   const {
     onSave,
   } = props;
-  const [values, setValues, updateInitValues] = useForm({
+  const [values, setValues] = useForm({
     email: '',
     password: '',
   });
@@ -22,15 +22,11 @@ const Register = (props) => {
   const onRegister = (e) => {
     e.preventDefault();
     onSave(values);
-    updateInitValues({
-      email: '',
-      password: '',
-    });
   };
 
   return (
     <PageWithForm
-      name="login"
+      name="register"
       title="Регистрация"
       submitText="Зарегистрироваться"
       onSubmit={onRegister}

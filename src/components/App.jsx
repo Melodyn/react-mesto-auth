@@ -2,7 +2,7 @@ import '../vendor/normalize.css';
 import '../blocks/index.css';
 import { useEffect, useState } from 'react';
 import { Api } from '../utils/Api';
-import { apiConfig, dataJSON, enumPopupName } from '../utils/constants';
+import { apiConfig, enumPopupName } from '../utils/constants';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 // components
 import { Header } from './Header';
@@ -16,6 +16,7 @@ import { PopupEditProfile } from './Popup/PopupEditProfile';
 import { PopupEditAvatar } from './Popup/PopupEditAvatar';
 import { PopupAddCard } from './Popup/PopupAddCard';
 import { PopupWithInfo } from './Popup/PopupWithInfo';
+import { useStorageToken } from '../hooks/useStorage';
 // contexts
 import { defaultCurrentUser, CurrentUserContext } from '../contexts/CurrentUserContext';
 
@@ -28,28 +29,49 @@ const App = () => {
     isSuccess: true,
     message: 'Успешно',
   });
-  const [currentUser, setCurrentUser] = useState(defaultCurrentUser);
-  const [cards, updateCards] = useState(dataJSON.places.slice().reverse());
+  const [token, saveToken] = useStorageToken();
+  const [currentUser, setCurrentUser] = useState({
+    ...defaultCurrentUser,
+    token,
+  });
+  const [cards, updateCards] = useState([]);
+
+  const showErrorInPopup = (onAction = '') => (err) => {
+    setLastOperationResult({
+      isSuccess: false,
+      message: err.message || `Что-то пошло не так${onAction ? ` ${onAction}`: ''}! Попробуйте ещё раз.`,
+    });
+    setOpenPopupName(enumPopupName.info);
+  };
 
   useEffect(() => {
-    // Promise
-    //   .all([
-    //     apiMesto.getCards(),
-    //     apiMesto.getProfile(),
-    //   ])
-    //   .then(([initCards, user]) => {
-    //     updateCards(initCards.slice().reverse());
-    //     setCurrentUser(user);
-    //   })
-    //   .catch(console.error);
-
-    const savedUserJSON = localStorage.getItem('user') || '{}';
-    const savedUser = JSON.parse(savedUserJSON);
-
-    if (savedUser && savedUser.token) {
-      setCurrentUser(savedUser);
+    apiMesto.setToken(currentUser.token);
+    if (currentUser.token) {
+      apiMesto.checkToken()
+        .then((result) => {
+          if (result && result.data) {
+            return Promise
+              .all([
+                apiMesto.getCards(),
+                apiMesto.getProfile(),
+              ])
+              .then(([initCards, user]) => {
+                updateCards(initCards.slice().reverse());
+                updateUser({
+                  ...result.data,
+                  ...user,
+                });
+                navigate('/');
+              })
+              .catch(showErrorInPopup('при получении данных с сервера'));
+          }
+        })
+        .catch((showErrorInPopup('при проверке токена')));
+    } else {
+      updateUser(defaultCurrentUser);
+      updateCards([]);
     }
-  }, []);
+  }, [currentUser.token]);
 
   const onClosePopup = () => {
     setOpenPopupName('');
@@ -87,7 +109,7 @@ const App = () => {
         const updatedCards = cards.map((crd) => ((crd._id === card._id) ? updatedCard : crd));
         updateCards(updatedCards);
       })
-      .catch(console.error);
+      .catch(showErrorInPopup());
   };
   const onCardRemove = (card) => {
     apiMesto
@@ -96,7 +118,7 @@ const App = () => {
         const updatedCards = cards.filter(({ _id }) => _id !== card._id);
         updateCards(updatedCards);
       })
-      .catch(console.error);
+      .catch(showErrorInPopup());
   };
   const onCardAdd = (data) => {
     apiMesto
@@ -105,7 +127,7 @@ const App = () => {
         onClosePopup();
         updateCards([card, ...cards]);
       })
-      .catch(console.error);
+      .catch(showErrorInPopup());
   };
 
   const onEditProfile = (updatedInfo) => {
@@ -113,18 +135,18 @@ const App = () => {
       .setInfo(updatedInfo)
       .then((updatedUser) => {
         onClosePopup();
-        setCurrentUser(updatedUser);
+        updateUser(updatedUser);
       })
-      .catch(console.error);
+      .catch(showErrorInPopup());
   };
   const onEditAvatar = (updatedInfo) => {
     apiMesto
       .setAvatar(updatedInfo)
       .then((updatedUser) => {
         onClosePopup();
-        setCurrentUser(updatedUser);
+        updateUser(updatedUser);
       })
-      .catch(console.error);
+      .catch(showErrorInPopup());
   };
 
   const updateUser = (user) => {
@@ -132,31 +154,43 @@ const App = () => {
       ...currentUser,
       ...user,
     };
-    if (user.isAuth) {
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    } else {
-      localStorage.removeItem('user');
-    }
+    console.log({ currentUser, user, updatedUser });
+    saveToken(updatedUser.token);
     setCurrentUser(updatedUser);
   };
   const onLogin = (user) => {
-    user.token = 'token';
-    user.isAuth = true;
-    updateUser(user);
-    navigate('/');
+    apiMesto.login(user)
+      .then((result) => {
+        if (result && result.token) {
+          updateUser({
+            email: user.email,
+            token: result.token,
+          });
+        } else {
+          showErrorInPopup('при входе');
+        }
+      })
+      .catch(showErrorInPopup());
   };
-  const onRegister = () => {
-    setLastOperationResult({
-      isSuccess: true,
-      message: 'Вы успешно зарегистрировались!',
-    });
-    setOpenPopupName(enumPopupName.info);
-    navigate('/signin');
+  const onRegister = (user) => {
+    apiMesto.register(user)
+      .then((result) => {
+        if (result && result.data) {
+          setLastOperationResult({
+            isSuccess: true,
+            message: 'Вы успешно зарегистрировались!',
+          });
+          setOpenPopupName(enumPopupName.info);
+          navigate('/signin');
+        } else {
+          showErrorInPopup('при регистрации');
+        }
+      })
+      .catch(showErrorInPopup());
   };
   const onLogout = () => {
     updateUser({
       token: '',
-      isAuth: false,
     });
     navigate('/signin');
   };
@@ -186,18 +220,18 @@ const App = () => {
         <Route
           path="/signin"
           element={
-            currentUser.isAuth ? <Navigate to="/" /> :<Login
-              onSave={onLogin}
-            />
+            currentUser.isAuth()
+              ? <Navigate to="/" />
+              : <Login onSave={onLogin} />
           }
         />
 
         <Route
           path="/signup"
           element={
-            currentUser.isAuth ? <Navigate to="/" /> : <Register
-              onSave={onRegister}
-            />
+            currentUser.isAuth()
+              ? <Navigate to="/" />
+              : <Register onSave={onRegister} />
           }
         />
       </Routes>

@@ -1,37 +1,55 @@
 import { httpMethod } from './constants';
 
+const processResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+
+  return res
+    .json()
+    .then(({ message, error }) => {
+      res.message = message || error || `Ошибка ${res.status}`;
+      return Promise.reject(res);
+    });
+};
+
 export class Api {
   constructor(config) {
     const {
       apiMestoBaseURL,
+      apiMestoAuthURL,
       apiMestoCohort,
       apiMestoToken,
     } = config;
-    const baseHeaders = {
-      Authorization: apiMestoToken,
-      'Content-Type': 'application/json; charset=utf-8',
-    };
+    this._config = config;
 
     this._fetch = (page, method = httpMethod.get, body = undefined) => fetch(
       `${apiMestoBaseURL}/${apiMestoCohort}/${page}`,
       {
         method,
-        headers: baseHeaders,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: apiMestoToken,
+        },
         body: (body && JSON.stringify(body)),
       },
     )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
+      .then(processResponse);
 
-        return res
-          .json()
-          .then(({ message }) => {
-            res.message = message || `Ошибка ${res.status}`;
-            return Promise.reject(res);
-          });
-      });
+    this._auth = (page, method = httpMethod.get, body = undefined) => fetch(
+      `${apiMestoAuthURL}/${page}`,
+      {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this._config.apiMestoAuthToken && {
+            Authorization: `Bearer ${this._config.apiMestoAuthToken}`,
+          }),
+        },
+        body: (body && JSON.stringify(body)),
+      },
+    )
+      .then(processResponse);
   }
 
   /* profile */
@@ -73,5 +91,22 @@ export class Api {
 
   removeLikeCard({ cardId }) {
     return this._fetch(`cards/like/${cardId}`, httpMethod.delete);
+  }
+
+  /* auth */
+  setToken(token = '') {
+    this._config.apiMestoAuthToken = token;
+  }
+
+  checkToken() {
+    return this._auth('users/me');
+  }
+
+  login({ password, email }) {
+    return this._auth('signin', httpMethod.post, { password, email });
+  }
+
+  register({ password, email }) {
+    return this._auth('signup', httpMethod.post, { password, email });
   }
 }

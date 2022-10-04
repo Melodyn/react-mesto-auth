@@ -5,7 +5,7 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 export const ProtectedRoute = ({ isAuth, children }) => {
   const currentUser = useContext(CurrentUserContext);
 
-  return currentUser.isAuth
+  return currentUser.isAuth()
     ? children
     : (<Navigate to="/signin" />);
 };
