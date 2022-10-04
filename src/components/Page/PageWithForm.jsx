@@ -5,7 +5,7 @@ const PageWithForm = (props) => {
     name, title, submitText,
     onSubmit,
     children,
-    Tip=null,
+    Tip = null,
   } = props;
 
   return (
@@ -14,7 +14,8 @@ const PageWithForm = (props) => {
         action="/"
         name={name}
         onSubmit={onSubmit}
-        className="form form_centered form_color_black form_full-height">
+        className="form form_centered form_color_black form_full-height"
+      >
         <div className="form__blocks-wrapper form_centered">
           <h2 className="title title_color_white">{title}</h2>
           {children}

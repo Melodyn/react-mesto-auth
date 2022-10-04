@@ -68,8 +68,8 @@ const Main = (props) => {
           )
         }
         {
-          cardComponents.length > 0 &&
-          (<ul className="cards__list">{cardComponents}</ul>)
+          cardComponents.length > 0
+          && (<ul className="cards__list">{cardComponents}</ul>)
         }
       </section>
     </main>

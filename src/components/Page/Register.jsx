@@ -2,6 +2,16 @@ import { Link } from 'react-router-dom';
 import { PageWithForm } from './PageWithForm';
 import { useForm } from '../../hooks/useForm';
 
+const Tip = () => (
+  <span className="tip tip_color_white">
+    Уже зарегистрированы?
+    {' '}
+    <Link to="/signin" className="tip tip_color_white animation">
+      Войти
+    </Link>
+  </span>
+);
+
 const Register = (props) => {
   const {
     onSave,
@@ -10,14 +20,6 @@ const Register = (props) => {
     email: '',
     password: '',
   });
-
-  const Tip = () => (
-    <span className="tip tip_color_white">
-      Уже зарегистрированы? <Link to="/signin"  className="tip tip_color_white animation">
-        Войти
-      </Link>
-    </span>
-  );
 
   const onRegister = (e) => {
     e.preventDefault();

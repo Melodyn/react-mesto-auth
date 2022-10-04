@@ -1,9 +1,11 @@
 import '../vendor/normalize.css';
 import '../blocks/index.css';
 import { useEffect, useState } from 'react';
+import {
+  Routes, Route, Navigate, useNavigate,
+} from 'react-router-dom';
 import { Api } from '../utils/Api';
 import { apiConfig, enumPopupName } from '../utils/constants';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 // components
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -39,9 +41,18 @@ const App = () => {
   const showErrorInPopup = (onAction = '') => (err) => {
     setLastOperationResult({
       isSuccess: false,
-      message: err.message || `Что-то пошло не так${onAction ? ` ${onAction}`: ''}! Попробуйте ещё раз.`,
+      message: err.message || `Что-то пошло не так${onAction ? ` ${onAction}` : ''}! Попробуйте ещё раз.`,
     });
     setOpenPopupName(enumPopupName.info);
+  };
+
+  const updateUser = (user) => {
+    const updatedUser = {
+      ...currentUser,
+      ...user,
+    };
+    saveToken(updatedUser.token);
+    setCurrentUser(updatedUser);
   };
 
   useEffect(() => {
@@ -50,7 +61,7 @@ const App = () => {
       apiMesto.checkToken()
         .then((result) => {
           if (result && result.data) {
-            return Promise
+            Promise
               .all([
                 apiMesto.getCards(),
                 apiMesto.getProfile(),
@@ -149,15 +160,6 @@ const App = () => {
       .catch(showErrorInPopup());
   };
 
-  const updateUser = (user) => {
-    const updatedUser = {
-      ...currentUser,
-      ...user,
-    };
-    console.log({ currentUser, user, updatedUser });
-    saveToken(updatedUser.token);
-    setCurrentUser(updatedUser);
-  };
   const onLogin = (user) => {
     apiMesto.login(user)
       .then((result) => {
@@ -197,12 +199,12 @@ const App = () => {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header onClickAuthButton={onLogout}/>
+      <Header onClickAuthButton={onLogout} />
 
       <Routes>
         <Route
           path="/"
-          element={
+          element={(
             <ProtectedRoute>
               <Main
                 cards={cards}
@@ -214,7 +216,7 @@ const App = () => {
                 onCardRemove={onCardRemove}
               />
             </ProtectedRoute>
-          }
+          )}
         />
 
         <Route
@@ -266,7 +268,8 @@ const App = () => {
       />
 
       <PopupWithInfo
-        {...lastOperationResult}
+        isSuccess={lastOperationResult.isSuccess}
+        message={lastOperationResult.message}
         isOpen={enumPopupName.info === openPopupName}
         onClose={onClosePopup}
       />

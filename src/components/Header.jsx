@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import cn from 'classnames';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { useLocation, Link } from 'react-router-dom';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 const Header = ({ onClickAuthButton }) => {
   const location = useLocation();
@@ -20,15 +20,15 @@ const Header = ({ onClickAuthButton }) => {
 
   const buttonElement = currentUser.isAuth()
     ? (
-        <button type="button" className={buttonClassName} onClick={onLogout}>
-          {buttonText}
-        </button>
-      )
+      <button type="button" className={buttonClassName} onClick={onLogout}>
+        {buttonText}
+      </button>
+    )
     : (
-        <Link to={isSignInLocation ? '/signup' : '/signin'} className={buttonClassName}>
-          {buttonText}
-        </Link>
-      );
+      <Link to={isSignInLocation ? '/signup' : '/signin'} className={buttonClassName}>
+        {buttonText}
+      </Link>
+    );
 
   return (
     <header className="header">

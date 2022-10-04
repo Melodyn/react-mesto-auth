@@ -1,7 +1,16 @@
-import { useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { PageWithForm } from './PageWithForm';
 import { useForm } from '../../hooks/useForm';
-import { Link } from 'react-router-dom';
+
+const Tip = () => (
+  <span className="tip tip_color_white">
+    Ещё нет аккаунта?
+    {' '}
+    <Link to="/signup" className="tip tip_color_white animation">
+      Зарегистрироваться
+    </Link>
+  </span>
+);
 
 const Login = (props) => {
   const {
@@ -11,14 +20,6 @@ const Login = (props) => {
     email: '',
     password: '',
   });
-
-  const Tip = () => (
-    <span className="tip tip_color_white">
-      Ещё нет аккаунта? <Link to="/signup" className="tip tip_color_white animation">
-        Зарегистрироваться
-      </Link>
-    </span>
-  );
 
   const onLogin = (e) => {
     e.preventDefault();
