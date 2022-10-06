@@ -12,10 +12,7 @@ const Tip = () => (
   </span>
 );
 
-const Register = (props) => {
-  const {
-    onSave,
-  } = props;
+const Register = ({ onSave }) => {
   const [values, setValues] = useForm({
     email: '',
     password: '',

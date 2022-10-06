@@ -5,7 +5,7 @@ import {
   Routes, Route, Navigate, useNavigate,
 } from 'react-router-dom';
 import { Api } from '../utils/Api';
-import { apiConfig, enumPopupName } from '../utils/constants';
+import { apiConfig, POPUP_NAME } from '../utils/constants';
 // components
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -22,7 +22,7 @@ import { useStorageToken } from '../hooks/useStorage';
 // contexts
 import { defaultCurrentUser, CurrentUserContext } from '../contexts/CurrentUserContext';
 
-const App = () => {
+export const App = () => {
   const apiMesto = new Api(apiConfig);
   const navigate = useNavigate();
   const [openPopupName, setOpenPopupName] = useState('');
@@ -43,7 +43,7 @@ const App = () => {
       isSuccess: false,
       message: err.message || `Что-то пошло не так${onAction ? ` ${onAction}` : ''}! Попробуйте ещё раз.`,
     });
-    setOpenPopupName(enumPopupName.info);
+    setOpenPopupName(POPUP_NAME.INFO);
   };
 
   const updateUser = (user) => {
@@ -84,9 +84,11 @@ const App = () => {
     }
   }, [currentUser.token]);
 
+  // popup
   const onClosePopup = () => {
     setOpenPopupName('');
   };
+
   const closeByEscape = (e) => (e.key === 'Escape') && onClosePopup();
 
   // eslint-disable-next-line consistent-return
@@ -99,48 +101,56 @@ const App = () => {
     }
   }, [openPopupName]);
 
+  // button
   const onOpenPopupEditProfile = () => {
-    setOpenPopupName(enumPopupName.profile);
-  };
-  const onOpenPopupEditAvatar = () => {
-    setOpenPopupName(enumPopupName.avatar);
-  };
-  const onOpenPopupCard = () => {
-    setOpenPopupName(enumPopupName.card);
+    setOpenPopupName(POPUP_NAME.PROFILE);
   };
 
+  const onOpenPopupEditAvatar = () => {
+    setOpenPopupName(POPUP_NAME.AVATAR);
+  };
+
+  const onOpenPopupCard = () => {
+    setOpenPopupName(POPUP_NAME.CARD);
+  };
+
+  // card
   const onCardClick = (card) => {
     setSelectedCard(card);
-    setOpenPopupName(enumPopupName.preview);
+    setOpenPopupName(POPUP_NAME.PREVIEW);
   };
+
   const onCardLike = (card) => {
     apiMesto
       .likeCard({ cardId: card._id, liked: card.liked })
       .then((updatedCard) => {
-        const updatedCards = cards.map((crd) => ((crd._id === card._id) ? updatedCard : crd));
-        updateCards(updatedCards);
+        updateCards((state) => state
+          .map((crd) => ((crd._id === card._id) ? updatedCard : crd)));
       })
       .catch(showErrorInPopup());
   };
+
   const onCardRemove = (card) => {
     apiMesto
       .removeCard({ cardId: card._id })
       .then(() => {
-        const updatedCards = cards.filter(({ _id }) => _id !== card._id);
-        updateCards(updatedCards);
+        updateCards((state) => state
+          .filter(({ _id }) => _id !== card._id));
       })
       .catch(showErrorInPopup());
   };
+
   const onCardAdd = (data) => {
     apiMesto
       .createCard(data)
       .then((card) => {
         onClosePopup();
-        updateCards([card, ...cards]);
+        updateCards((state) => [card, ...state]);
       })
       .catch(showErrorInPopup());
   };
 
+  // profile
   const onEditProfile = (updatedInfo) => {
     apiMesto
       .setInfo(updatedInfo)
@@ -150,6 +160,7 @@ const App = () => {
       })
       .catch(showErrorInPopup());
   };
+
   const onEditAvatar = (updatedInfo) => {
     apiMesto
       .setAvatar(updatedInfo)
@@ -160,6 +171,7 @@ const App = () => {
       .catch(showErrorInPopup());
   };
 
+  // auth
   const onLogin = (user) => {
     apiMesto.login(user)
       .then((result) => {
@@ -174,6 +186,7 @@ const App = () => {
       })
       .catch(showErrorInPopup());
   };
+
   const onRegister = (user) => {
     apiMesto.register(user)
       .then((result) => {
@@ -182,7 +195,7 @@ const App = () => {
             isSuccess: true,
             message: 'Вы успешно зарегистрировались!',
           });
-          setOpenPopupName(enumPopupName.info);
+          setOpenPopupName(POPUP_NAME.INFO);
           navigate('/signin');
         } else {
           showErrorInPopup('при регистрации');
@@ -190,10 +203,9 @@ const App = () => {
       })
       .catch(showErrorInPopup());
   };
+
   const onLogout = () => {
-    updateUser({
-      token: '',
-    });
+    updateUser(defaultCurrentUser);
     navigate('/signin');
   };
 
@@ -241,26 +253,26 @@ const App = () => {
       <Footer />
 
       <PopupEditProfile
-        isOpen={enumPopupName.profile === openPopupName}
+        isOpen={POPUP_NAME.PROFILE === openPopupName}
         onSave={onEditProfile}
         onClose={onClosePopup}
       />
 
       <PopupEditAvatar
-        isOpen={enumPopupName.avatar === openPopupName}
+        isOpen={POPUP_NAME.AVATAR === openPopupName}
         onSave={onEditAvatar}
         onClose={onClosePopup}
       />
 
       <PopupAddCard
-        isOpen={enumPopupName.card === openPopupName}
+        isOpen={POPUP_NAME.CARD === openPopupName}
         onSave={onCardAdd}
         onClose={onClosePopup}
       />
 
       <PopupWithImage
         card={selectedCard}
-        isOpen={enumPopupName.preview === openPopupName}
+        isOpen={POPUP_NAME.PREVIEW === openPopupName}
         onClose={() => {
           onClosePopup();
           setSelectedCard({});
@@ -270,11 +282,9 @@ const App = () => {
       <PopupWithInfo
         isSuccess={lastOperationResult.isSuccess}
         message={lastOperationResult.message}
-        isOpen={enumPopupName.info === openPopupName}
+        isOpen={POPUP_NAME.INFO === openPopupName}
         onClose={onClosePopup}
       />
     </CurrentUserContext.Provider>
   );
 };
-
-export default App;

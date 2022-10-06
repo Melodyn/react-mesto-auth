@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { PopupWithForm } from './PopupWithForm';
-import { enumPopupName } from '../../utils/constants';
+import { POPUP_NAME } from '../../utils/constants';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { useForm } from '../../hooks/useForm';
 
@@ -19,7 +19,7 @@ const PopupEditProfile = (props) => {
 
   return (
     <PopupWithForm
-      name={enumPopupName.profile}
+      name={POPUP_NAME.PROFILE}
       title="Редактировать профиль"
       submitText="Сохранить"
       isOpen={isOpen}

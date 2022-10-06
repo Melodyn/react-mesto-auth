@@ -1,6 +1,6 @@
-import { createRef } from 'react';
+import { useRef } from 'react';
 import { PopupWithForm } from './PopupWithForm';
-import { enumPopupName } from '../../utils/constants';
+import { POPUP_NAME } from '../../utils/constants';
 
 const PopupEditAvatar = (props) => {
   const {
@@ -8,11 +8,11 @@ const PopupEditAvatar = (props) => {
     onSave,
     onClose,
   } = props;
-  const avatarRef = createRef(null);
+  const avatarRef = useRef(null);
 
   return (
     <PopupWithForm
-      name={enumPopupName.avatar}
+      name={POPUP_NAME.AVATAR}
       title="Обновить аватар"
       submitText="Сохранить"
       isOpen={isOpen}

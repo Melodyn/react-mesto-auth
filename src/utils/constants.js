@@ -14,16 +14,16 @@ export const httpMethod = {
   delete: 'DELETE',
 };
 
-export const enumPopupName = [
-  'profile',
-  'card',
-  'avatar',
-  'preview',
-  'info',
+export const POPUP_NAME = Object.freeze([
+  'PROFILE',
+  'CARD',
+  'AVATAR',
+  'PREVIEW',
+  'INFO',
 ].reduce((acc, value) => {
   acc[value] = value;
   return acc;
-}, {});
+}, {}));
 
 // Фикстура для локальной разработки
 export const dataJSON = {

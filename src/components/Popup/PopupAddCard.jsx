@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { PopupWithForm } from './PopupWithForm';
-import { enumPopupName } from '../../utils/constants';
+import { POPUP_NAME } from '../../utils/constants';
 import { useForm } from '../../hooks/useForm';
 
 const PopupAddCard = (props) => {
@@ -17,7 +17,7 @@ const PopupAddCard = (props) => {
 
   return (
     <PopupWithForm
-      name={enumPopupName.card}
+      name={POPUP_NAME.CARD}
       title="Новое место"
       submitText="Создать"
       onSubmit={(e) => {
